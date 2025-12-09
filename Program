@@ -1,0 +1,127 @@
+from pathlib import Path
+
+# =========================================================
+# SET YOUR BASE DIRECTORY HERE BEFORE RUNNING THE PROGRAM
+# Example:
+# Base = Path(r"C:\Users\YourUser\Documents\MyFiles")
+# =========================================================
+
+Base = Path(r"")   # <-- SET YOUR DIRECTORY HERE
+Base.mkdir(exist_ok=True)
+
+def make_folder():
+    new_folder = input("Enter the name of the new folder: ")
+
+    new_directory = Base / new_folder
+    new_directory.mkdir(exist_ok=True, parents=True)
+
+    print("Folder created:", new_directory)
+
+def make_file_null():
+    new_file = input("Enter the name of the new file: ")
+
+    if not new_file.endswith(".txt"):
+        new_file += ".txt"
+
+    new_file_path = Base / new_file
+    new_file_path.touch(exist_ok=True)
+
+    print("File created:", new_file_path)
+
+def write_text():
+    while True:
+        file = input("Which file do you want to access? ")
+
+        if not file.endswith(".txt"):
+            file += ".txt"
+
+        search_file = Base / file
+
+        if search_file.exists():
+            text = input("What do you want to write? ")
+
+            with search_file.open("a", encoding="utf-8") as f:
+                f.write(text + "\n")
+
+            print("Text added to:", search_file)
+            break
+        else:
+            print("File does not exist. Try again.")
+
+def read_file():
+    while True:
+        file = input("Which file do you want to read? ")
+
+        if not file.endswith(".txt"):
+            file += ".txt"
+
+        search_file = Base / file
+
+        if search_file.exists():
+            content = search_file.read_text(encoding="utf-8")
+            print("\nFile content:\n", content)
+            break
+        else:
+            print("File does not exist. Try again.")
+
+def delete_file():
+    while True:
+        file = input("Which file do you want to delete? ")
+
+        if not file.endswith(".txt"):
+            file += ".txt"
+
+        search_file = Base / file
+
+        if search_file.exists():
+            search_file.unlink()
+            print("File deleted:", search_file)
+            break
+        else:
+            print("File does not exist. Try again.")
+
+def list_files():
+    items = list(Base.iterdir())
+
+    if not items:
+        print("No files or folders found.")
+        return
+
+    for item in items:
+        if item.is_file():
+            print("File:", item.name)
+        elif item.is_dir():
+            print("Folder:", item.name)
+
+def menu():
+    while True:
+        print("\n----------- File Manager Menu -----------")
+        print("1. Create new folder")
+        print("2. Create new empty file")
+        print("3. Write to a file")
+        print("4. Read a file")
+        print("5. Delete a file")
+        print("6. List files and folders")
+        print("7. Exit")
+
+        choice = input("Choose an option (1-7): ").strip()
+
+        if choice == "1":
+            make_folder()
+        elif choice == "2":
+            make_file_null()
+        elif choice == "3":
+            write_text()
+        elif choice == "4":
+            read_file()
+        elif choice == "5":
+            delete_file()
+        elif choice == "6":
+            list_files()
+        elif choice == "7":
+            confirm = input("Are you sure you want to exit? (y/n): ").lower()
+            if confirm == "y":
+                print("Exiting program.")
+                break
+
+menu()
