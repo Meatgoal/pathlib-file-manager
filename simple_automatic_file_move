@@ -1,0 +1,66 @@
+from pathlib import Path
+import shutil
+
+def search_business_folder():
+    base = Path(r"")# Specify the base path here, input
+    while True:
+        business_name = input("Whats the name of the business folder to search for? ")
+        business_folder = base / business_name
+        
+        if business_folder.exists() and business_folder.is_dir():
+            print("Business folder found:", business_folder)
+            break
+        else:
+            print("Business folder not found.")
+    return business_folder
+
+def two_first_files():
+    downloads_dir = Path(r"")# Specify folder what you can move, output
+
+    files = [f for f in downloads_dir.iterdir() if f.is_file()]
+    if not files:
+        print("No files found in Downloads.")
+        return []
+
+    files_sorted = sorted(
+        files,
+        key=lambda x: x.stat().st_mtime,
+        reverse=True
+    )
+
+    two_files = files_sorted[:2] #Put it here when you want the documents you want me to pick up.
+
+    confirmed = []
+    print("\n--- Files Found ---")
+    for file in two_files:
+        print("File:", file.name)
+        confirm = input("Confirm this file? (y/n): ").lower()
+
+        if confirm == "y":
+            confirmed.append(file)
+            print("✔ File confirmed.")
+        else:
+            print("✖ File NOT confirmed.")
+
+    return confirmed
+
+
+def mover(business_folder, file):
+    destination = business_folder / file.name
+    shutil.move(str(file), str(destination))
+    print(f"File moved: {file.name} → {destination}")
+
+
+# ---------------- Main Loop -----------------
+
+while True:
+    business_folder = search_business_folder()
+
+    confirmed_files = two_first_files()
+
+    for file in confirmed_files:
+        mover(business_folder, file)
+
+    choice = input("\nDo you want to search for another business folder? (y/n) ")
+    if choice.lower() == 'n':
+        break
